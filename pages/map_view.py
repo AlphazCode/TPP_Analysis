@@ -2,7 +2,7 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 import time
-from src.utils import get_data, calculate_gaussian_plume, add_gaussian_plume_to_map, fetch_missing_dates, determine_date_range
+from src.utils import get_data, calculate_gaussian_plume, add_gaussian_plume_to_map
 import pandas as pd
 from datetime import datetime
 
@@ -96,11 +96,18 @@ def show_map_view_page():
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(m)
 
-            plume_points = calculate_gaussian_plume(view_lat, view_lon, wind_speed, wind_direction, aqi=aqi)
+            plume_points = calculate_gaussian_plume(plant_info['id'], wind_speed, wind_direction, aqi=aqi*5)
+            # for dat in plume_points:
+            #     print(dat)
+            #     print(f"City: {dat['city']} - AQI: {dat['aqi']}")
+            #     coords, aqi_value, city = dat
             add_gaussian_plume_to_map(plume_points, m)
 
             # Display wind information and map on the same line
-            col1, col2 = st.columns([1, 3])
+            col1, col2, col3 = st.columns([1,1, 3])
+            with col1:
+                inf = f"### Wind Information\n**Wind Speed:** {wind_speed:.1f} m/s\n**Wind Direction:** {wind_direction:.0f}°\n"
+                st.markdown(inf)
             with col1:
                 inf = f"### Wind Information\n**Wind Speed:** {wind_speed:.1f} m/s\n**Wind Direction:** {wind_direction:.0f}°\n"
                 st.markdown(inf)
